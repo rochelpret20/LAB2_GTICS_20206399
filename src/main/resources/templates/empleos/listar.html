@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Empleados registradas</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 8px 10px; text-align: left; }
+        th { background-color: #1F4E79; color: white; }
+        tr:nth-child(even) { background-color: #f7f7f7; }
+        .activo { color: #1a7d1a; font-weight: bold; }
+        .inactivo { color: #b00020; font-weight: bold; }
+        .acciones a { margin-right: 8px; }
+        form.busqueda { display: flex; gap: 8px; align-items: center; margin-top: 10px; }
+        .top-actions { display: flex; justify-content: space-between; align-items: center; }
+    </style>
+</head>
+<body>
+
+<div class="top-actions">
+    <h1>Empleados registradas</h1>
+    <div>
+        <a th:href="@{/empleados/nueva}">+ Nueva empleado</a>
+        &nbsp;|&nbsp;
+        <a th:href="@{/empleados/reporte}">Ver reporte</a>
+    </div>
+</div>
+
+
+<form class="busqueda" th:action="@{/empleados}" method="get">
+    <select name="criterio">
+        <option value="first_name"  th:selected="${criterio == 'first_name'}">Primer Nombre</option>
+        <option value="last_name" th:selected="${criterio == 'last_name'}">Apellido</option>
+        <option value="email" th:selected="${criterio == 'email'}">Correo</option>
+        <option value="phone_number" th:selected="${criterio == 'phone_number'}">Teléfono</option>
+        <option value="hire_date" th:selected="${criterio == 'hire_date'}">Date</option>
+        <option value="salary" th:selected="${criterio == 'salary'}">Salario</option>
+        <option value="comision_pct" th:selected="${criterio == 'comision_pct'}">Comision</option>
+
+    </select>
+    <input type="text" name="valor" th:value="${valor}" placeholder="Valor a buscar..." />
+    <button type="submit">Buscar</button>
+    <!-- Limpiar filtros: enlace simple al listado sin parametros -->
+    <a th:href="@{/empleados}">Limpiar filtros</a>
+</form>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Primer nombre</th>
+        <th>apellido</th>
+        <th>correo</th>
+        <th>telefono</th>
+        <th>date</th>
+        <th>salario</th>
+        <th>comision</th>
+        <th>Editar</th>
+        <th>Eliminar</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="m : ${empleos}">
+        <td th:text="${m.employee_id}"></td>
+        <td th:text="${m.first_name}"></td>
+        <td th:text="${m.email}"></td>
+        <td th:text="${m.phone_number}"></td>
+        <td th:text="${m.hire_date}"></td>
+        <td th:text="${m.nombreDueno}"></td>
+        <td th:text="${m.salary}"></td>
+        <td th:text="${m.comision_pct}"></td>
+        <td class="acciones">
+            <a th:href="@{/empleos/editar/{id}(id=${m.id})}">Editar</a>
+        </td>
+        <td class="acciones">
+            <a th:href="@{/empleos/eliminar/{id}(id=${m.id})}"
+               onclick="return confirm('¿Eliminar este empleado?');">Eliminar</a>
+        </td>
+    </tr>
+    <tr th:if="${#lists.isEmpty(empleados)}">
+        <td colspan="10">No se encontraron empleados con ese criterio de búsqueda.</td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
